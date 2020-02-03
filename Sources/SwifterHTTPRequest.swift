@@ -169,10 +169,6 @@ public class HTTPRequest: NSObject, URLSessionDataDelegate {
             let session = URLSession(configuration: .default, delegate: self, delegateQueue: .main)
             self.dataTask = session.dataTask(with: self.request!)
             self.dataTask?.resume()
-            
-            #if os(iOS)
-            UIApplication.shared.isNetworkActivityIndicatorVisible = true
-            #endif
         }
     }
     
@@ -207,9 +203,6 @@ public class HTTPRequest: NSObject, URLSessionDataDelegate {
     // MARK: - URLSessionDataDelegate
     
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        #if os(iOS)
-        UIApplication.shared.isNetworkActivityIndicatorVisible = false
-        #endif
         
         defer {
             session.finishTasksAndInvalidate()

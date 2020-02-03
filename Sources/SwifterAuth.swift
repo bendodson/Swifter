@@ -111,7 +111,9 @@ public extension Swifter {
                 safariView.modalPresentationStyle = .overFullScreen
                 presenting?.present(safariView, animated: true, completion: nil)
             } else {
-                UIApplication.shared.open(queryUrl, options: [:], completionHandler: nil)
+                #if !TARGET_IS_EXTENSION
+                    UIApplication.shared.open(queryUrl, options: [:], completionHandler: nil)
+                #endif
             }
         }, failure: failure)
     }
@@ -146,14 +148,16 @@ public extension Swifter {
             }
         }
         
-        let url = URL(string: "twitterauth://authorize?consumer_key=\(client.consumerKey)&consumer_secret=\(client.consumerSecret)&oauth_callback=\(urlScheme)")!
-        UIApplication.shared.open(url, options: [:], completionHandler: { (success) in
-            if !success {
-                let error = SwifterError(message: "Cannot open twitter app",
-                                         kind: .noTwitterApp)
-                failure?(error)
-            }
-        })
+        #if !TARGET_IS_EXTENSION
+            let url = URL(string: "twitterauth://authorize?consumer_key=\(client.consumerKey)&consumer_secret=\(client.consumerSecret)&oauth_callback=\(urlScheme)")!
+            UIApplication.shared.open(url, options: [:], completionHandler: { (success) in
+                if !success {
+                    let error = SwifterError(message: "Cannot open twitter app",
+                                             kind: .noTwitterApp)
+                    failure?(error)
+                }
+            })
+        #endif
     }
     
     #endif
